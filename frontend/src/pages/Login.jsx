@@ -1,0 +1,114 @@
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { motion } from 'framer-motion';
+import loginImg from '../assets/login.svg';
+
+export default function Login() {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:8080/api/auth/login', formData);
+      localStorage.setItem("email", res.data.email);
+      setMessage('Login successful!');
+      navigate("/home");
+    } catch (err) {
+      setMessage('Login failed. Please check your credentials.');
+      console.error(err);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] px-4">
+      <div className="relative flex flex-col md:flex-row items-center bg-white/10 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-6xl border border-white/20 overflow-hidden">
+
+        {/* Floating Blur Effects */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.1, scale: 1.1 }}
+          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", repeatType: "reverse" }}
+          className="absolute top-10 left-10 w-20 h-20 bg-purple-400 rounded-full blur-2xl"
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 0.1, y: -30 }}
+          transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", repeatType: "reverse" }}
+          className="absolute bottom-10 right-10 w-28 h-28 bg-pink-500 rounded-full blur-2xl"
+        />
+
+        {/* Illustration */}
+        <motion.div
+          initial={{ opacity: 0, x: -60 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="hidden md:flex md:w-1/2 justify-center"
+        >
+          <img src={loginImg} alt="Login Illustration" className="w-80 object-contain drop-shadow-xl" />
+        </motion.div>
+
+        {/* Login Form */}
+        <motion.form
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, x: 60 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="md:w-1/2 w-full bg-white/20 rounded-2xl p-8 shadow-lg space-y-6 text-white border border-white/20"
+        >
+          <h2 className="text-4xl font-extrabold text-center text-indigo-400 drop-shadow-md">
+            🔐 Login
+          </h2>
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            aria-label="Email"
+            autoComplete="email"
+            className="w-full p-3 rounded-lg bg-gray-100/90 text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-200"
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            aria-label="Password"
+            autoComplete="current-password"
+            className="w-full p-3 rounded-lg bg-gray-100/90 text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-200"
+            onChange={handleChange}
+            required
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg"
+          >
+            🚀 Login
+          </button>
+
+          <p className="text-center text-sm text-indigo-300">
+            Don't have an account?{' '}
+            <Link to="/signup" className="font-bold text-white hover:underline">
+              Sign Up
+            </Link>
+          </p>
+
+          {message && (
+            <p className="text-center text-sm text-red-400 mt-2">
+              {message}
+            </p>
+          )}
+        </motion.form>
+      </div>
+    </div>
+  );
+}
