@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 public class AssemblyAIClient {
-    private String apiKey="45c8ab8fd5a7432facb9a693a7acbe28";
+    private String apiKey="your api key";
 
     private final RestTemplate restTemplate = new RestTemplate();
 
